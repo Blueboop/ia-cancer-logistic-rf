@@ -115,20 +115,6 @@ st.write(
     """
 )
 
-# Selector de modelo
-model_option = st.selectbox(
-    "Seleccione el modelo de clasificación:",
-    options=["Regresión Logística (logreg)", "Random Forest (rf)"],
-)
-
-# Traducir la opción elegida al nombre interno que usa predict_patient
-if "logreg" in model_option:
-    selected_model_name = "logreg"
-else:
-    selected_model_name = "rf"
-
-st.write(f"Modelo seleccionado internamente: `{selected_model_name}`")
-
 # =========================================================
 # Formulario de entrada para las características del tumor
 # =========================================================
@@ -183,34 +169,57 @@ for feature in FEATURE_COLUMNS:
 st.subheader("Predicción")
 
 if st.button("Calcular predicción"):
-    result = predict_patient(
+    # --- Modelo 1: Regresión Logística ---
+    result_logreg = predict_patient(
         models=models,
         input_data=input_values,
-        model_name=selected_model_name,
+        model_name="logreg",
     )
 
-    # Extraer predicción y probabilidad
-    prediction = result["prediction"]
-    probability = result["probability"]
+    pred_logreg = result_logreg["prediction"]
+    prob_logreg = result_logreg["probability"]
 
     # Si vienen como arrays, tomar el primer elemento
-    if isinstance(prediction, (np.ndarray, list)):
-        prediction = prediction[0]
-    if isinstance(probability, (np.ndarray, list)):
-        probability = probability[0]
+    if isinstance(pred_logreg, (np.ndarray, list)):
+        pred_logreg = pred_logreg[0]
+    if isinstance(prob_logreg, (np.ndarray, list)):
+        prob_logreg = prob_logreg[0]
 
-    # Traducir 0/1 a texto
-    if prediction == 1:
-        diagnosis_text = "Maligno"
-    else:
-        diagnosis_text = "Benigno"
+    diag_logreg = "Maligno" if pred_logreg == 1 else "Benigno"
 
-    # Mostrar resultados al usuario
-    st.markdown(f"### Diagnóstico estimado: **{diagnosis_text}**")
-    st.markdown(f"**Probabilidad de malignidad:** {probability:.2%}")
+    # --- Modelo 2: Random Forest ---
+    result_rf = predict_patient(
+        models=models,
+        input_data=input_values,
+        model_name="rf",
+    )
 
-    # Nota aclaratoria
+    pred_rf = result_rf["prediction"]
+    prob_rf = result_rf["probability"]
+
+    if isinstance(pred_rf, (np.ndarray, list)):
+        pred_rf = pred_rf[0]
+    if isinstance(prob_rf, (np.ndarray, list)):
+        prob_rf = prob_rf[0]
+
+    diag_rf = "Maligno" if pred_rf == 1 else "Benigno"
+
+    # Mostrar resultados en dos columnas
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("### Regresión Logística")
+        st.markdown(f"**Diagnóstico:** {diag_logreg}")
+        st.markdown(f"**Probabilidad de malignidad:** {prob_logreg:.2%}")
+
+    with col2:
+        st.markdown("### Random Forest")
+        st.markdown(f"**Diagnóstico:** {diag_rf}")
+        st.markdown(f"**Probabilidad de malignidad:** {prob_rf:.2%}")
+
+    # Nota aclaratoria general
     st.info(
         "⚠️ Esta herramienta tiene fines exclusivamente educativos y no debe "
         "utilizarse como sistema de diagnóstico médico real."
     )
+
