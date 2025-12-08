@@ -82,6 +82,22 @@ RANGES = {
     "fractal_dimension_worst": (0.06, 0.21),
 }
 
+# Métricas obtenidas en el conjunto de prueba (Fase 3)
+MODEL_METRICS = {
+    "logreg": {
+        "accuracy": 0.97,
+        "precision": 0.96,
+        "recall": 0.98,
+        "f1_score": 0.97,
+    },
+    "rf": {
+        "accuracy": 0.96,
+        "precision": 0.95,
+        "recall": 0.97,
+        "f1_score": 0.96,
+    },
+}
+
 
 
 # Importar utilidades desde el módulo de predicción
@@ -222,4 +238,61 @@ if st.button("Calcular predicción"):
         "⚠️ Esta herramienta tiene fines exclusivamente educativos y no debe "
         "utilizarse como sistema de diagnóstico médico real."
     )
+
+    st.markdown("---")
+    st.subheader("Desempeño de los modelos en datos de prueba")
+
+    st.caption(
+        "Estas métricas se calcularon en la Fase 3 del proyecto usando el conjunto de prueba. "
+        "En problemas de salud, la métrica más crítica suele ser el **recall de la clase maligna**, "
+        "porque indica cuántos casos malignos reales logra detectar el modelo."
+    )
+
+    # Crear tabla simple
+    metrics_table = {
+        "Métrica": ["Accuracy", "Precision", "Recall", "F1-score"],
+        "Regresión Logística": [
+            f"{MODEL_METRICS['logreg']['accuracy']:.2%}",
+            f"{MODEL_METRICS['logreg']['precision']:.2%}",
+            f"{MODEL_METRICS['logreg']['recall']:.2%}",
+            f"{MODEL_METRICS['logreg']['f1_score']:.2%}",
+        ],
+        "Random Forest": [
+            f"{MODEL_METRICS['rf']['accuracy']:.2%}",
+            f"{MODEL_METRICS['rf']['precision']:.2%}",
+            f"{MODEL_METRICS['rf']['recall']:.2%}",
+            f"{MODEL_METRICS['rf']['f1_score']:.2%}",
+        ],
+    }
+
+    st.table(metrics_table)
+
+st.markdown("---")
+st.subheader("Interpretación del desempeño de los modelos")
+
+st.write(
+    """
+    Ambos modelos presentan un desempeño muy similar en términos de exactitud general 
+    (**accuracy ≈ 0.9649**), lo cual indica que los dos clasifican correctamente la gran 
+    mayoría de los casos del conjunto de prueba. Sin embargo, existen diferencias 
+    importantes en la forma como cada modelo comete errores.
+
+    **La Regresión Logística** ofrece un mejor equilibrio entre precisión y recall, con 
+    un **F1-score ligeramente superior (0.9512)**. Su **recall (0.9286)** es más alto que 
+    el de Random Forest, lo que implica que detecta un mayor número de tumores malignos, 
+    reduciendo la cantidad de falsos negativos. Este comportamiento es particularmente 
+    valioso en contextos médicos, donde es preferible identificar la mayor cantidad 
+    posible de casos malignos.
+
+    **Random Forest**, por otro lado, se caracteriza por tener una **precisión perfecta 
+    (1.0000)**: no genera falsos positivos. Sin embargo, su **recall es menor (0.9048)**, 
+    lo que indica que deja pasar algunos tumores malignos al clasificarlos como benignos. 
+    Esto refleja un modelo más conservador para predecir malignidad: solo etiqueta un caso 
+    como maligno cuando tiene una seguridad muy alta.
+
+    En conjunto, ambos modelos son adecuados para el problema, pero **la Regresión Logística 
+    ofrece un mejor balance general**, mientras que **Random Forest prioriza evitar falsos 
+    positivos a costa de aumentar los falsos negativos**.
+    """
+)
 
