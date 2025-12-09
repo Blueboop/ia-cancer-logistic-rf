@@ -168,9 +168,12 @@ streamlit run app.py
 
 ## Autoría
 
-**Proyecto desarrollado por**
+**Proyecto desarrollado por:**
 Alexa Guzman
+
 Jeans Gomez
+
 Kevin Pepinosa 
+
 como parte del curso de Inteligencia Artificial.
 
