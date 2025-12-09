@@ -175,3 +175,9 @@ Kevin Pepinosa.
 
 Como parte del curso de Inteligencia Artificial.
 
+## 🔗 Enlaces del proyecto
+
+- 📁 Repositorio en GitHub: https://github.com/TU_USUARIO/IA-CANCER-LOGISTIC-RF
+- 🌐 Aplicación en línea (Streamlit): https://ia-cancer-logistic-rf-wnec9cswj2smouyb8dhasp.streamlit.app/
+
+
